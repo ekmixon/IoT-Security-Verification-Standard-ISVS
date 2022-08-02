@@ -45,7 +45,7 @@ class ISVS:
 
     def __init__(self, lang):
 
-        target = "../{}".format(lang)
+        target = f"../{lang}"
 
         for file in os.listdir(target):
 
@@ -57,21 +57,15 @@ class ISVS:
                     # group 4 : (.*?) L2
                     # group 5 : (.*?) L3
                     regex = re.compile(r'\*\*(\d\.\d+\.*\d*)\*\*\s\|\s{0,1}(.*?)\s{0,1}\|\s{0,1}(.*?)\s{0,1}\|\s{0,1}(.*?)\s{0,1}\|(\s{0,1}(.*?)\s{0,1}\|)?')
-                    # Add if needed in the future
-                    # if lang=="fa" :
-                    #    line=line.decode('utf-8')
-                    match = re.search(regex, line)
+                    if match := re.search(regex, line):
+                        req = {'ID': match[1].strip()}
 
-                    if match:
-                        req = {}
-
-                        req['ID'] = match.group(1).strip()
-                        req['Description'] = match.group(2).strip()
+                        req['Description'] = match[2].strip()
                         #req['category'] = match.group(2).replace(u"\u2011", "-")
-                        req['L1'] = len(match.group(3).strip()) > 0
-                        req['L2'] = len(match.group(4).strip()) > 0
+                        req['L1'] = len(match[3].strip()) > 0
+                        req['L2'] = len(match[4].strip()) > 0
                         # [:-1] removes the last "|" from the match
-                        req['L3'] = len(match.group(5)[:-1].strip()) > 0
+                        req['L3'] = len(match[5][:-1].strip()) > 0
 
                         self.requirements.append(req)
 
@@ -96,8 +90,9 @@ class ISVS:
         xml = '<requirements>'
 
         for r in self.requirements:
-            xml += "<requirement ID='{}' L1='{}' L2='{}' L3='{}'>{}</requirement>\n".format(r['ID'], int(r['L1']), int(r['L2']), int(r['L3']), escape(r['Description']))
-        
+            xml += f"<requirement ID='{r['ID']}' L1='{int(r['L1'])}' L2='{int(r['L2'])}' L3='{int(r['L3'])}'>{escape(r['Description'])}</requirement>\n"
+
+
         xml += '</requirements>'
         return xml
 

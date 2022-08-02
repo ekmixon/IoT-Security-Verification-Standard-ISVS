@@ -29,6 +29,7 @@
 
     '''
 
+
 import argparse
 from isvs import ISVS
 
@@ -52,7 +53,7 @@ else:
 
 if args.out: 
     # save to file
-    filename = "{}.{}".format(args.out,out_format)
+    filename = f"{args.out}.{out_format}"
     with open(filename,"w") as out_file:
         out_file.write(result)
 else:
